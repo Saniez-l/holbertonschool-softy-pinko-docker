@@ -1,0 +1,37 @@
+# On spécifie la version du format Docker Compose (la version 3 est standard)
+version: '3'
+
+# Ici, on définit la liste des "services" (les conteneurs) qu'on veut lancer
+services:
+
+  # --- PREMIER SERVICE : LE BACK-END (L'API Python) ---
+  back-end:
+    # Configuration de la construction de l'image
+    build:
+      context: ./back-end # Docker va chercher les fichiers dans le dossier "back-end"
+      dockerfile: Dockerfile # Il utilise le fichier nommé "Dockerfile" qui est dedans
+
+    # Le nom qu'on veut donner à l'image une fois construite
+    image: softy-pinko-back-end:task4
+
+    # Mapping des ports (Ouverture vers l'extérieur)
+    ports:
+      - "5252:5252" # Port de ton PC (gauche) : Port du Conteneur (droite)
+
+  # --- DEUXIÈME SERVICE : LE FRONT-END (Site Web Nginx) ---
+  front-end:
+    # Configuration de la construction
+    build:
+      context: ./front-end # Docker va chercher les fichiers dans le dossier "front-end"
+      dockerfile: Dockerfile # Il utilise le fichier nommé "Dockerfile"
+
+    # Le nom de l'image
+    image: softy-pinko-front-end:task4
+
+    # Mapping des ports pour accéder au site web
+    ports:
+      - "9000:9000" # Tu pourras voir le site sur http://localhost:9000
+
+    # Gestion de l'ordre de démarrage
+    depends_on:
+      - back-end # Dit à Docker : "Ne lance pas le front-end tant que le back-end n'est pas initialisé"
