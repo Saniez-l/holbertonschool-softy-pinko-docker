@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  # --- LE BACK-END ---
+  back-end:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    image: softy-pinko-back-end:task6
+    # ATTENTION : On a SUPPRIMÉ la section "ports".
+    # Ce conteneur n'est plus accessible depuis Windows directement.
+    # Seul le proxy (qui est dans le même réseau Docker) peut lui parler.
+
+    # --- LE FRONT-END ---
+  front-end:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    image: softy-pinko-front-end:task5
+    # IDEM : Plus de ports ici. Accessible uniquement en interne.
+
+    # --- LE PROXY (La seule porte d'entrée) ---
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    image: softy-pinko-proxy:task6
+    ports:
+      - "80:80" # On ouvre la porte standard du Web (80) vers Windows
+    depends_on:
+      - back-end
+      - front-end
